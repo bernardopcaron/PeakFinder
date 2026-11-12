@@ -12,15 +12,18 @@
     "db:migrar": "node scripts/migrar.mjs",
     "db:tipos": "node scripts/gerar-tipos.mjs",
     "seed": "tsx supabase/seed/semear.ts",
-    "seed:modelos": "tsx supabase/seed/gerar-modelos.ts"
+    "seed:modelos": "tsx supabase/seed/gerar-modelos.ts",
+    "postinstall": "node scripts/copiar-worker.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.119.0",
+    "maplibre-gl": "^6.18.0",
     "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "supercluster": "^9.1.0",
     "three": "^0.187.0",
     "zod": "^4.6.7"
   },
@@ -30,6 +33,7 @@
     "@types/node": "^22.20.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/supercluster": "^7.1.3",
     "@types/three": "^0.187.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",

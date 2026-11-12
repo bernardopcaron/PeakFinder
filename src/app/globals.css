@@ -67,3 +67,42 @@ body {
   outline: 2px solid var(--color-terracota-600);
   outline-offset: 2px;
 }
+
+/* Marcadores do mapa (criados fora do React, pelo MapLibre) */
+.pino-mapa {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.pino-mapa::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: var(--color-terracota-600);
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.45);
+}
+.pino-mapa[aria-pressed="true"]::before {
+  background: var(--color-grafite-900);
+  transform: scale(1.2);
+}
+.pino-mapa.grupo {
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  background: var(--color-grafite-900);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.45);
+}
+.pino-mapa.grupo::before {
+  display: none;
+}

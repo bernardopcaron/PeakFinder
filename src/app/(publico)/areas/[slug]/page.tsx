@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Aviso } from "@/componentes/Aviso";
 import { AVISO_DEMONSTRATIVO, Secao } from "@/componentes/Secao";
@@ -8,6 +9,7 @@ import { texto } from "@/lib/formato";
 import { AlertaAcesso, CapaArea, ListaSetores } from "@/modulos/areas";
 import { obterAreaPorSlug } from "@/modulos/areas/consultas";
 import { Galeria } from "@/modulos/comunidade/componentes/Galeria";
+import { MiniMapa } from "@/modulos/mapa";
 import { TabelaVias } from "@/modulos/vias";
 import { listarViasDaArea } from "@/modulos/vias/consultas";
 
@@ -52,6 +54,12 @@ export default async function PaginaArea({ params }: PageProps<"/areas/[slug]">)
             </Secao>
           </div>
           <aside className="space-y-6">
+            <div className="space-y-2">
+              <MiniMapa lat={area.lat} lng={area.lng} />
+              <Link href={`/mapa?area=${area.slug}`} className="inline-flex min-h-11 items-center font-semibold text-terracota-700 underline-offset-2 hover:underline">
+                Ver no mapa
+              </Link>
+            </div>
             <dl className="divide-y divide-pedra-200 rounded-xl bg-white ring-1 ring-pedra-200">
               {[
                 ["Tipo de rocha", texto(area.tipo_rocha)],

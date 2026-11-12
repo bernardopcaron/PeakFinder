@@ -43,3 +43,4 @@ chaves.txt
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/public/maplibre-gl-worker.mjs

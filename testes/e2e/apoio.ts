@@ -26,3 +26,45 @@ export async function sair(page: Page) {
   await page.getByRole("button", { name: "Sair" }).click();
   await expect(page.getByRole("link", { name: "Entrar", exact: true })).toBeVisible();
 }
+
+const ESTILO_SIMULADO = {
+  version: 8,
+  sources: {},
+  layers: [{ id: "fundo", type: "background", paint: { "background-color": "#e6e8ea" } }],
+};
+
+/** Troca o mapa-base externo por um estilo vazio, para os testes não dependerem da rede. */
+export async function simularMapaBase(page: Page) {
+  await page.route("**/tiles.openfreemap.org/**", (rota) =>
+    rota.request().url().includes("/styles/")
+      ? rota.fulfill({ contentType: "application/json", body: JSON.stringify(ESTILO_SIMULADO) })
+      : rota.abort(),
+  );
+}
+
+export async function bloquearMapaBase(page: Page) {
+  await page.route("**/tiles.openfreemap.org/**", (rota) => rota.abort());
+}
+
+export async function esperarMapa(page: Page) {
+  await page.waitForFunction(() => (window as unknown as { __mapaPronto?: boolean }).__mapaPronto === true, null, { timeout: 30000 });
+}
+
+/** Aproxima o mapa clicando nos agrupamentos até o marcador da área aparecer, e clica nele. */
+export async function abrirAreaNoMapa(page: Page, nome: string) {
+  const marcador = page.getByRole("button", { name: nome, exact: true });
+  for (let tentativa = 0; tentativa < 8 && !(await marcador.isVisible()); tentativa++) {
+    const grupos = page.getByRole("button", { name: /áreas — aproximar$/ });
+    const total = await grupos.count();
+    let clicou = false;
+    for (let i = 0; i < total && !clicou; i++) {
+      const grupo = grupos.nth(i);
+      if ((await grupo.getAttribute("data-areas"))?.split("|").includes(nome)) {
+        await grupo.click();
+        clicou = true;
+      }
+    }
+    await page.waitForTimeout(900);
+  }
+  await marcador.click();
+}
