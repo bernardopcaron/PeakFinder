@@ -5,6 +5,8 @@ import { Aviso } from "@/componentes/Aviso";
 import { AVISO_DEMONSTRATIVO, Secao } from "@/componentes/Secao";
 import { Selo } from "@/componentes/Selo";
 import { SeloSituacao } from "@/componentes/SeloSituacao";
+import { urlPublica } from "@/lib/arquivos";
+import { Visualizador3D } from "@/modulos/visualizador3d";
 import { texto } from "@/lib/formato";
 import { AlertaAcesso, CapaArea, ListaSetores } from "@/modulos/areas";
 import { obterAreaPorSlug } from "@/modulos/areas/consultas";
@@ -43,6 +45,17 @@ export default async function PaginaArea({ params }: PageProps<"/areas/[slug]">)
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="space-y-8 lg:col-span-2">
             {area.descricao && <p className="whitespace-pre-line leading-relaxed text-grafite-800">{area.descricao}</p>}
+            {area.modelo && (
+              <Secao titulo="Modelo 3D">
+                <Visualizador3D
+                  url={urlPublica("modelos", area.modelo.caminho)}
+                  nome={area.modelo.nome}
+                  demonstrativo={area.modelo.demonstrativo}
+                  fotosReserva={area.fotos.filter((f) => f.tipo === "foto").map((f) => urlPublica("fotos", f.caminho))}
+                />
+                {area.modelo.descricao && <p className="mt-2 text-sm text-grafite-600">{area.modelo.descricao}</p>}
+              </Secao>
+            )}
             <Secao titulo="Setores">
               <ListaSetores areaSlug={area.slug} setores={area.setores} />
             </Secao>

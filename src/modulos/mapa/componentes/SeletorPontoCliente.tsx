@@ -13,7 +13,9 @@ export default function SeletorPontoCliente({ valor, onChange }: { valor: Ponto 
   const mapaRef = useRef<MapaLibre | null>(null);
   const marcador = useRef<Marker | null>(null);
   const aoMudar = useRef(onChange);
-  aoMudar.current = onChange;
+  useEffect(() => {
+    aoMudar.current = onChange;
+  });
   const [estado, setEstado] = useState<"carregando" | "pronto" | "falhou">("carregando");
 
   useEffect(() => {

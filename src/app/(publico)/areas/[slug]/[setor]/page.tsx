@@ -5,6 +5,8 @@ import { Aviso } from "@/componentes/Aviso";
 import { AVISO_DEMONSTRATIVO, Secao } from "@/componentes/Secao";
 import { Selo } from "@/componentes/Selo";
 import { SeloSituacao } from "@/componentes/SeloSituacao";
+import { urlPublica } from "@/lib/arquivos";
+import { Visualizador3D } from "@/modulos/visualizador3d";
 import { texto } from "@/lib/formato";
 import { obterSetor } from "@/modulos/areas/consultas";
 import { Galeria } from "@/modulos/comunidade/componentes/Galeria";
@@ -53,6 +55,17 @@ export default async function PaginaSetor({ params }: PageProps<"/areas/[slug]/[
         </div>
       </dl>
 
+      {setor.modelo && (
+        <Secao titulo="Modelo 3D">
+          <Visualizador3D
+            url={urlPublica("modelos", setor.modelo.caminho)}
+            nome={setor.modelo.nome}
+            demonstrativo={setor.modelo.demonstrativo}
+            fotosReserva={setor.fotos.filter((f) => f.tipo === "foto").map((f) => urlPublica("fotos", f.caminho))}
+          />
+          {setor.modelo.descricao && <p className="mt-2 text-sm text-grafite-600">{setor.modelo.descricao}</p>}
+        </Secao>
+      )}
       <Secao titulo="Vias">
         <TabelaVias vias={vias} mostrarSetor={false} />
       </Secao>

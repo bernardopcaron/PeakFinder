@@ -29,7 +29,7 @@ export default function MapaCliente({ colecao, areaInicial }: { colecao: Colecao
   const [estado, setEstado] = useState<Estado>("carregando");
   const [filtros, setFiltros] = useState<FiltrosMapa>(SEM_FILTROS);
   const [painelAberto, setPainelAberto] = useState(false);
-  const [selecionada, setSelecionada] = useState<PropsArea | null>(null);
+  const [escolhida, setSelecionada] = useState<PropsArea | null>(null);
 
   const filtrada = useMemo(() => filtrarAreas(colecao, filtros), [colecao, filtros]);
   const areas = useMemo(
@@ -42,11 +42,16 @@ export default function MapaCliente({ colecao, areaInicial }: { colecao: Colecao
     return sc;
   }, [areas]);
 
+  // A área escolhida deixa de valer quando um filtro a remove do mapa.
+  const selecionada = escolhida && areas.some((a) => a.properties.slug === escolhida.slug) ? escolhida : null;
+
   // Guardados em refs para os ouvintes do mapa enxergarem sempre os valores atuais.
   const indiceRef = useRef(indice);
   const selecionadaRef = useRef(selecionada);
-  indiceRef.current = indice;
-  selecionadaRef.current = selecionada;
+  useEffect(() => {
+    indiceRef.current = indice;
+    selecionadaRef.current = selecionada;
+  });
 
   const desenharMarcadores = useRef(() => {
     const mapa = mapaRef.current;
@@ -141,10 +146,6 @@ export default function MapaCliente({ colecao, areaInicial }: { colecao: Colecao
     (mapa.getSource("setores") as GeoJSONSource | undefined)?.setData(doTipo(filtrada, ["setor"]));
     desenharMarcadores.current();
   }, [filtrada, estado, selecionada]);
-
-  useEffect(() => {
-    if (selecionada && !areas.some((a) => a.properties.slug === selecionada.slug)) setSelecionada(null);
-  }, [areas, selecionada]);
 
   const irPara = (area: (typeof areas)[number]) => {
     setSelecionada(area.properties);
