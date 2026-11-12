@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { ITENS_NAVEGACAO, estaAtivo } from "./navegacao";
 
-export function BarraSuperior({ children }: { children?: React.ReactNode }) {
+export function BarraSuperior({ children }: { children?: ReactNode }) {
   const caminhoAtual = usePathname();
   return (
     <header className="sticky top-0 z-40 border-b border-grafite-800 bg-grafite-900 text-areia-50">

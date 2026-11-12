@@ -8,7 +8,9 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   reporter: [["list"]],
-  use: { baseURL, locale: "pt-BR", trace: "retain-on-failure" },
+  globalTeardown: "./testes/e2e/limpeza.global.ts",
+  expect: { timeout: 12000 },
+  use: { baseURL, locale: "pt-BR", trace: "retain-on-failure", actionTimeout: 15000, navigationTimeout: 30000 },
   projects: [
     { name: "celular", use: { ...devices["Pixel 7"] } },
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 } } },
