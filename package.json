@@ -10,7 +10,9 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "db:migrar": "node scripts/migrar.mjs",
-    "db:tipos": "node scripts/gerar-tipos.mjs"
+    "db:tipos": "node scripts/gerar-tipos.mjs",
+    "seed": "tsx supabase/seed/semear.ts",
+    "seed:modelos": "tsx supabase/seed/gerar-modelos.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
@@ -19,6 +21,7 @@
     "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "three": "^0.187.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -27,10 +30,12 @@
     "@types/node": "^22.20.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.187.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "supabase": "^3.1.0",
     "tailwindcss": "4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.1.0"
   }
