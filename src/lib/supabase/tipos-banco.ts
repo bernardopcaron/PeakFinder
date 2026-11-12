@@ -929,6 +929,7 @@ export type Database = {
           titulo: string
         }[]
       }
+      chamada_de_usuario: { Args: never; Returns: boolean }
       contar_favoritos: { Args: { via: string }; Returns: number }
       eh_admin: { Args: never; Returns: boolean }
       gerar_slug: { Args: { texto: string }; Returns: string }
