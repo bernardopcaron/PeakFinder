@@ -5,8 +5,12 @@ import { Aviso } from "@/componentes/Aviso";
 import { AVISO_DEMONSTRATIVO, Secao } from "@/componentes/Secao";
 import { Selo } from "@/componentes/Selo";
 import { SeloSituacao } from "@/componentes/SeloSituacao";
+import { hojeNoBrasil } from "@/lib/datas";
 import { ehUuid } from "@/lib/formato";
+import { obterUsuario } from "@/lib/sessao";
 import { Galeria } from "@/modulos/comunidade/componentes/Galeria";
+import { Avaliar, BotaoFavoritar, FormAscensao } from "@/modulos/escaladas";
+import { estadoDaViaParaUsuario } from "@/modulos/escaladas/consultas";
 import { FichaTecnica } from "@/modulos/vias";
 import { obterVia } from "@/modulos/vias/consultas";
 
@@ -22,6 +26,8 @@ export async function generateMetadata({ params }: PageProps<"/vias/[id]">): Pro
 export default async function PaginaVia({ params }: PageProps<"/vias/[id]">) {
   const via = await carregar((await params).id);
   if (!via) notFound();
+  const [usuario, estado] = await Promise.all([obterUsuario(), estadoDaViaParaUsuario(via.id)]);
+  const logado = Boolean(usuario);
 
   return (
     <article className="mx-auto max-w-4xl space-y-8 px-4 py-6">
@@ -46,7 +52,14 @@ export default async function PaginaVia({ params }: PageProps<"/vias/[id]">) {
         {via.origem === "demonstrativo" && <Aviso tom="alerta">{AVISO_DEMONSTRATIVO}</Aviso>}
       </header>
 
+      <div className="flex flex-wrap items-start gap-3">
+        <BotaoFavoritar viaId={via.id} favoritada={estado.favoritada} logado={logado} />
+        <FormAscensao viaId={via.id} modalidade={via.modalidade} ascensoes={estado.ascensoes} logado={logado} hoje={hojeNoBrasil()} />
+      </div>
+
       <FichaTecnica via={via} />
+
+      <Avaliar key={`${estado.minhaNota}`} viaId={via.id} minhaNota={estado.minhaNota} media={via.nota_media} total={via.total_avaliacoes} logado={logado} />
 
       {via.descricao && (
         <Secao titulo="Descrição">

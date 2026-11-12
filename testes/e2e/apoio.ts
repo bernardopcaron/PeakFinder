@@ -68,3 +68,14 @@ export async function abrirAreaNoMapa(page: Page, nome: string) {
   }
   await marcador.click();
 }
+
+/** Abre a página de uma via demonstrativa a partir da página da área. */
+export async function abrirVia(page: Page, areaSlug: string, nomeVia: string) {
+  await page.goto(`/areas/${areaSlug}`);
+  await page.getByTestId("linha-via").filter({ hasText: nomeVia }).getByRole("link").click();
+  await expect(page.getByRole("heading", { level: 1, name: nomeVia })).toBeVisible();
+}
+
+export function hojeSaoPaulo(): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(new Date());
+}
