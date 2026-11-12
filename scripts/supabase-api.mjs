@@ -22,5 +22,5 @@ export async function api(caminho, opcoes = {}) {
 }
 
 export function sql(query) {
-  return api("/database/query", { method: "POST", body: JSON.stringify({ query }) });
+  return api("/database/query", { method: "POST", body: JSON.stringify({ query, read_only: false }) });
 }
