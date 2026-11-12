@@ -17,3 +17,9 @@ export const esquemaEntrada = z.object({
 export const esquemaRecuperacao = z.object({ email });
 
 export const esquemaNovaSenha = z.object({ senha });
+
+export const esquemaPerfil = z.object({
+  nome: z.string().trim().min(2, "Informe seu nome (mínimo de 2 letras).").max(80, "O nome pode ter no máximo 80 caracteres."),
+  nome_usuario: z.string().trim().regex(/^[a-z0-9_]{3,30}$/, "Use de 3 a 30 letras minúsculas, números ou _."),
+  bio: z.string().trim().max(300, "A biografia pode ter no máximo 300 caracteres."),
+});

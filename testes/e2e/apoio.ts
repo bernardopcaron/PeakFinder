@@ -23,7 +23,7 @@ export async function entrar(page: Page, email: string, senha = SENHA) {
 }
 
 export async function sair(page: Page) {
-  await page.getByRole("button", { name: "Sair" }).click();
+  await page.getByRole("button", { name: "Sair", exact: true }).click();
   await expect(page.getByRole("link", { name: "Entrar", exact: true })).toBeVisible();
 }
 
