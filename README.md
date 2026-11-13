@@ -46,9 +46,9 @@ Os testes de banco e de navegador usam o projeto Supabase configurado em `.env.l
 1. Importe o repositório na Vercel.
 2. Defina `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Não defina a chave de serviço.
 3. No Supabase, em Authentication → URL Configuration, ponha o endereço do site em **Site URL** e em **Redirect URLs**.
-4. Nos modelos de e-mail do Supabase (Reset Password e Confirm signup), use links para `/auth/confirm`:
-   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/nova-senha` e
-   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/`.
+4. Recuperação de senha: com o e-mail padrão do Supabase (plano gratuito), o link só funciona no mesmo navegador que fez o pedido. Para funcionar em qualquer aparelho, configure um SMTP próprio no Supabase e aponte os modelos de e-mail para `/auth/confirm`:
+   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/nova-senha` (Reset Password) e
+   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/` (Confirm signup).
 5. Crie a conta do administrador no site e rode `npm run seed`.
 
 ## Estrutura
