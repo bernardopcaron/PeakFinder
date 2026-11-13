@@ -32,12 +32,16 @@ async function gravarContribuicao(tipo: TipoContribuicao, esquema: ZodType<Recor
 
   if (typeof id === "string" && id) {
     if (!ehUuid(id)) return falha("Contribuição inválida.");
-    // O RLS só permite alterar registros próprios e ainda em análise.
-    const { data, error } = await supabase.from(TABELAS[tipo]).update(linha as never).eq("id", id).eq("criado_por", usuario.id).eq("situacao", "pendente").select("id");
+    const admin = usuario.perfil.papel === "admin";
+    // Autores só alteram registros próprios e ainda em análise; administradores editam qualquer um (o RLS confirma).
+    let alteracao = supabase.from(TABELAS[tipo]).update(linha as never).eq("id", id);
+    if (!admin) alteracao = alteracao.eq("criado_por", usuario.id).eq("situacao", "pendente");
+    const { data, error } = await alteracao.select("id, criado_por");
     if (error) return falha(undefined, { valores: valoresDe(form) });
     if (data.length === 0) return falha("Esta contribuição já foi analisada e não pode mais ser editada.", { valores: valoresDe(form) });
     revalidatePath("/minhas-escaladas");
-    redirect("/minhas-escaladas?enviado=edicao");
+    revalidatePath("/admin", "layout");
+    redirect(admin && (data[0] as { criado_por: string | null }).criado_por !== usuario.id ? "/admin/pendentes" : "/minhas-escaladas?enviado=edicao");
   }
 
   const { error } = await supabase.from(TABELAS[tipo]).insert(linha as never);

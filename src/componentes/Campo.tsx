@@ -52,7 +52,8 @@ export function CampoSelecao({ rotulo, erro, ajuda, children, ...props }: Comum 
   const id = props.id ?? `campo-${props.name}`;
   return (
     <Moldura id={id} rotulo={rotulo} erro={erro} ajuda={ajuda}>
-      <select {...props} id={id} aria-invalid={erro ? true : undefined} aria-describedby={descricao(id, erro, ajuda)} className={CLASSES_INPUT}>
+      {/* O React limpa o formulário após uma ação; a chave faz o select voltar ao valor devolvido pelo servidor. */}
+      <select key={props.value === undefined ? String(props.defaultValue ?? "") : undefined} {...props} id={id} aria-invalid={erro ? true : undefined} aria-describedby={descricao(id, erro, ajuda)} className={CLASSES_INPUT}>
         {children}
       </select>
     </Moldura>

@@ -37,12 +37,14 @@ export async function listarMinhasContribuicoes(): Promise<Contribuicao[]> {
 
 const TABELAS = { area: "areas", setor: "setores", via: "vias" } as const;
 
-/** Registro do próprio usuário ainda em análise, para edição; null em qualquer outro caso. */
+/** Registro que o usuário pode editar: o próprio, ainda em análise, ou qualquer um se for administrador. */
 export async function obterContribuicaoParaEdicao(tipo: TipoContribuicao, id: string): Promise<Record<string, unknown> | null> {
   const usuario = await obterUsuario();
   if (!usuario) return null;
   const supabase = await criarClienteServidor();
-  const { data } = await supabase.from(TABELAS[tipo]).select("*").eq("id", id).eq("criado_por", usuario.id).eq("situacao", "pendente").maybeSingle();
+  let consulta = supabase.from(TABELAS[tipo]).select("*").eq("id", id);
+  if (usuario.perfil.papel !== "admin") consulta = consulta.eq("criado_por", usuario.id).eq("situacao", "pendente");
+  const { data } = await consulta.maybeSingle();
   return data;
 }
 
