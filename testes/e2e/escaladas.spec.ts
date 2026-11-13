@@ -89,6 +89,8 @@ test("avaliar a via atualiza a média e a nota do usuário persiste", async ({ p
   await cadastrar(page, "Kiko Nota");
   await abrirVia(page, "morro-do-anhangava", "Cristal");
   await page.getByRole("radio", { name: "4 estrelas" }).click();
+  // O grupo fica desabilitado enquanto a nota é gravada; só então a página é recarregada.
+  await expect(page.getByRole("radio", { name: "4 estrelas" })).toBeEnabled();
   await expect(page.getByTestId("nota-media")).toContainText("4,0");
   await page.reload();
   await expect(page.getByRole("radio", { name: "4 estrelas" })).toBeChecked();
