@@ -1,11 +1,20 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type APIRequestContext } from "@playwright/test";
 import { abrirAreaNoMapa, bloquearMapaBase, esperarMapa, simularMapaBase } from "./apoio";
 
-test("o mapa mostra as áreas e leva à página da área pelo marcador", async ({ page }) => {
+/** Total de áreas publicadas agora (o seed tem 7; outros testes podem ter aprovado áreas temporárias). */
+async function totalDeAreas(request: APIRequestContext): Promise<string> {
+  const corpo = await (await request.get("/api/mapa")).json();
+  const total = corpo.features.filter((f: { properties: { tipo: string } }) => f.properties.tipo === "area").length;
+  expect(total).toBeGreaterThanOrEqual(7);
+  return `${total} áreas`;
+}
+
+test("o mapa mostra as áreas e leva à página da área pelo marcador", async ({ page, request }) => {
+  const todas = await totalDeAreas(request);
   await simularMapaBase(page);
   await page.goto("/mapa");
   await esperarMapa(page);
-  await expect(page.getByTestId("contador-areas")).toHaveText("7 áreas");
+  await expect(page.getByTestId("contador-areas")).toHaveText(todas);
 
   await abrirAreaNoMapa(page, "Pedra do Baú");
   const cartao = page.getByTestId("cartao-marcador");
@@ -16,7 +25,8 @@ test("o mapa mostra as áreas e leva à página da área pelo marcador", async (
   await expect(page).toHaveURL("/areas/pedra-do-bau");
 });
 
-test("os filtros de modalidade e de grau reduzem as áreas", async ({ page }) => {
+test("os filtros de modalidade e de grau reduzem as áreas", async ({ page, request }) => {
+  const todas = await totalDeAreas(request);
   await simularMapaBase(page);
   await page.goto("/mapa");
   await esperarMapa(page);
@@ -26,14 +36,14 @@ test("os filtros de modalidade e de grau reduzem as áreas", async ({ page }) =>
   await page.getByRole("button", { name: "Boulder", exact: true }).click();
   await expect(page.getByTestId("contador-areas")).toHaveText("1 área");
   await page.getByRole("button", { name: "Boulder", exact: true }).click();
-  await expect(page.getByTestId("contador-areas")).toHaveText("7 áreas");
+  await expect(page.getByTestId("contador-areas")).toHaveText(todas);
 
   await page.getByRole("button", { name: "9º grau ou mais" }).click();
   await expect(page.getByTestId("contador-areas")).toHaveText("1 área");
   await page.getByRole("button", { name: "Tradicional", exact: true }).click();
   await expect(page.getByTestId("contador-areas")).toHaveText("0 áreas");
   await page.getByRole("button", { name: "Limpar filtros" }).click();
-  await expect(page.getByTestId("contador-areas")).toHaveText("7 áreas");
+  await expect(page.getByTestId("contador-areas")).toHaveText(todas);
 });
 
 test("sem o mapa-base, a lista de áreas continua acessível", async ({ page }) => {
