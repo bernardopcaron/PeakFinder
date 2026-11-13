@@ -67,3 +67,11 @@ test("pedido de recuperação de senha confirma o envio sem revelar se o e-mail 
   await page.getByRole("button", { name: "Enviar link" }).click();
   await expect(page.getByText("Se houver uma conta com este e-mail, enviaremos um link para redefinir a senha.")).toBeVisible();
 });
+
+test("link de e-mail inválido ou adulterado leva de volta ao login com aviso", async ({ page }) => {
+  for (const caminho of ["/auth/confirm?token_hash=invalido&type=recovery&next=/nova-senha", "/auth/confirm?type=recovery", "/auth/confirm?token_hash=x&type=outro", "/auth/callback?code=invalido"]) {
+    await page.goto(caminho);
+    await expect(page, caminho).toHaveURL("/entrar?erro=link");
+    await expect(page.getByText("O link é inválido ou expirou. Peça um novo.")).toBeVisible();
+  }
+});

@@ -8,6 +8,7 @@ import { SeloSituacao } from "@/componentes/SeloSituacao";
 import { urlPublica } from "@/lib/arquivos";
 import { Visualizador3D } from "@/modulos/visualizador3d";
 import { texto } from "@/lib/formato";
+import { AlertaAcesso } from "@/modulos/areas";
 import { obterSetor } from "@/modulos/areas/consultas";
 import { classesBotao } from "@/componentes/Botao";
 import { obterUsuario } from "@/lib/sessao";
@@ -44,6 +45,7 @@ export default async function PaginaSetor({ params }: PageProps<"/areas/[slug]/[
         </div>
         <h1 className="text-3xl font-bold tracking-tight">{setor.nome}</h1>
         {setor.origem === "demonstrativo" && <Aviso tom="alerta">{AVISO_DEMONSTRATIVO}</Aviso>}
+        <AlertaAcesso alertas={setor.alertas} />
       </header>
 
       {setor.descricao && <p className="whitespace-pre-line leading-relaxed text-grafite-800">{setor.descricao}</p>}

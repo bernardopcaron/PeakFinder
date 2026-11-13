@@ -59,6 +59,13 @@ describe("filtrarAreas", () => {
     expect(outros).toEqual(["s-boulder-duro", "t-boulder-duro"]);
   });
 
+  it("ignora via com ordem de grau fora da escala em vez de quebrar o mapa", () => {
+    const comLixo = { type: "FeatureCollection", features: [...colecao.features, area("lixo", [{ m: "boulder", o: 25 }, { m: "esportiva", o: 0 }])] } as ColecaoMapa;
+    expect(() => filtrarAreas(comLixo, { modalidades: [], faixas: ["boulder-v9-mais"] })).not.toThrow();
+    expect(slugs(filtrarAreas(comLixo, { modalidades: [], faixas: ["boulder-v9-mais"] }))).toEqual(["boulder-duro"]);
+    expect(slugs(filtrarAreas(comLixo, { modalidades: ["boulder"], faixas: [] }))).toContain("lixo");
+  });
+
   it("não altera a coleção original", () => {
     const antes = colecao.features.length;
     filtrarAreas(colecao, { modalidades: ["boulder"], faixas: [] });

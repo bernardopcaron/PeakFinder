@@ -8,6 +8,8 @@ import { SeloSituacao } from "@/componentes/SeloSituacao";
 import { hojeNoBrasil } from "@/lib/datas";
 import { ehUuid } from "@/lib/formato";
 import { obterUsuario } from "@/lib/sessao";
+import { AlertaAcesso } from "@/modulos/areas";
+import { listarAlertasDaArea } from "@/modulos/areas/consultas";
 import { Comentarios, EnvioFotos, Galeria } from "@/modulos/comunidade";
 import { FormReporte } from "@/modulos/moderacao";
 import { Avaliar, BotaoFavoritar, FormAscensao } from "@/modulos/escaladas";
@@ -27,7 +29,7 @@ export async function generateMetadata({ params }: PageProps<"/vias/[id]">): Pro
 export default async function PaginaVia({ params }: PageProps<"/vias/[id]">) {
   const via = await carregar((await params).id);
   if (!via) notFound();
-  const [usuario, estado] = await Promise.all([obterUsuario(), estadoDaViaParaUsuario(via.id)]);
+  const [usuario, estado, alertas] = await Promise.all([obterUsuario(), estadoDaViaParaUsuario(via.id), listarAlertasDaArea(via.area_id)]);
   const logado = Boolean(usuario);
 
   return (
@@ -51,6 +53,7 @@ export default async function PaginaVia({ params }: PageProps<"/vias/[id]">) {
           {via.area_municipio} · {via.area_estado}
         </p>
         {via.origem === "demonstrativo" && <Aviso tom="alerta">{AVISO_DEMONSTRATIVO}</Aviso>}
+        <AlertaAcesso alertas={alertas} />
       </header>
 
       <div className="flex flex-wrap items-start gap-3">

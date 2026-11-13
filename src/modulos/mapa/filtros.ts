@@ -1,9 +1,13 @@
-import { faixaDoGrau } from "@/lib/graus";
+import { faixasDaModalidade } from "@/lib/graus";
 import type { ColecaoMapa, FiltrosMapa, ViaNoMapa } from "./tipos";
 
 function viaPassa(via: ViaNoMapa, f: FiltrosMapa): boolean {
   if (f.modalidades.length > 0 && !f.modalidades.includes(via.m)) return false;
-  if (f.faixas.length > 0 && !f.faixas.includes(faixaDoGrau(via.o, via.m))) return false;
+  if (f.faixas.length > 0) {
+    // Uma ordem fora da escala (dado inconsistente) simplesmente não casa com nenhuma faixa.
+    const faixa = faixasDaModalidade(via.m).find((x) => via.o >= x.min && via.o <= x.max);
+    if (!faixa || !f.faixas.includes(faixa.id)) return false;
+  }
   return true;
 }
 

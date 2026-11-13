@@ -62,7 +62,7 @@ export async function pedirRecuperacao(_anterior: EstadoFormulario, form: FormDa
   const protocolo = cabecalhos.get("x-forwarded-proto") ?? "https";
   const supabase = await criarClienteServidor();
   await supabase.auth.resetPasswordForEmail(validado.data.email, {
-    redirectTo: `${protocolo}://${host}/auth/callback?destino=/nova-senha`,
+    redirectTo: `${protocolo}://${host}/nova-senha`,
   });
   // Mesma resposta exista ou não a conta, para não revelar quais e-mails estão cadastrados.
   return sucesso(undefined, "Se houver uma conta com este e-mail, enviaremos um link para redefinir a senha.");

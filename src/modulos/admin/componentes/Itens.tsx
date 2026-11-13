@@ -119,7 +119,7 @@ export function ItemReporte({ item }: { item: ReporteAdmin }) {
           </>
         )}
       </div>
-      {publico && item.situacao === "aberto" && <p className="text-xs text-grafite-600">Ao confirmar, o alerta aparece no topo da página da área para todos.</p>}
+      {publico && item.situacao === "aberto" && <p className="text-xs text-grafite-600">Ao confirmar, o alerta aparece para todos no topo das páginas da área, dos setores e das vias.</p>}
     </li>
   );
 }

@@ -15,6 +15,6 @@ export type AlertaAcesso = { id: string; tipo: "restricao" | "interdicao"; descr
 
 export type AreaDetalhe = Area & { setores: Setor[]; alertas: AlertaAcesso[]; modelo: Modelo3D | null; fotos: Foto[] };
 
-export type SetorDetalhe = Setor & { area: Pick<Area, "id" | "slug" | "nome" | "municipio" | "estado">; modelo: Modelo3D | null; fotos: Foto[] };
+export type SetorDetalhe = Setor & { area: Pick<Area, "id" | "slug" | "nome" | "municipio" | "estado">; alertas: AlertaAcesso[]; modelo: Modelo3D | null; fotos: Foto[] };
 
 export type ResultadoBusca = { tipo: "area" | "via"; id: string; titulo: string; subtitulo: string; caminho: string };

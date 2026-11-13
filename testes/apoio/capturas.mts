@@ -1,6 +1,6 @@
 // Gera capturas de tela das principais telas para revisão visual: npx tsx testes/apoio/capturas.mts
 import { chromium, devices } from "@playwright/test";
-import { criarUsuarioTeste, limparDadosTeste } from "./usuarios.ts";
+import { criarUsuarioTeste, limparDadosTeste } from "./usuarios";
 
 const base = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 const pasta = process.argv[2] ?? "capturas";

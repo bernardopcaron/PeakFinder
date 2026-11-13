@@ -167,6 +167,24 @@ test("interdição confirmada vira alerta na área e some quando resolvida", asy
   await expect(page.getByTestId("alerta-acesso")).toHaveCount(0);
 });
 
+test("interdição reportada em um setor aparece na área, no setor e nas vias", async ({ page }) => {
+  const nome = `Área Setor Fechado ${sufixo()}`;
+  const autor = await criarUsuarioTeste("usuario", "Autor Setor Fechado");
+  const area = await criarArea(autor, nome, true);
+  const setor = (await servico.from("setores").insert({ area_id: area.id, nome: "Setor Fechado", situacao: "aprovado" }).select("id, slug").single()).data!;
+  const via = (await servico.from("vias").insert({ setor_id: setor.id, nome: "Via Fechada", modalidade: "esportiva", grau: "V", grau_ordem: 9, situacao: "aprovado" }).select("id").single()).data!;
+  const descricao = `Setor fechado para nidificação ${sufixo()}`;
+  const reporte = (await autor.cliente.from("reportes").insert({ setor_id: setor.id, tipo: "restricao", descricao }).select("id").single()).data!;
+  const admin = await criarUsuarioTeste("admin", "Admin Setor Fechado");
+  expect((await admin.cliente.from("reportes").update({ situacao: "confirmado" }).eq("id", reporte.id)).error).toBeNull();
+
+  for (const caminho of [`/areas/${area.slug}`, `/areas/${area.slug}/${setor.slug}`, `/vias/${via.id}`]) {
+    await page.goto(caminho);
+    await expect(page.getByTestId("alerta-acesso"), caminho).toContainText(descricao);
+    await expect(page.getByTestId("alerta-acesso")).toContainText("Restrição de acesso");
+  }
+});
+
 test("admin promove e rebaixa outro usuário, mas não remove o próprio acesso", async ({ page }) => {
   const alvo = await criarUsuarioTeste("usuario", `Promovido ${sufixo()}`);
   const admin = await criarUsuarioTeste("admin", `Admin Papéis ${sufixo()}`);

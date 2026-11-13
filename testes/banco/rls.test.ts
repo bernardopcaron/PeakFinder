@@ -100,6 +100,26 @@ describe("moderação de áreas", () => {
   });
 });
 
+describe("consistência de grau e modalidade no banco", () => {
+  const via = (extra: Record<string, unknown>) => ({ setor_id: setorId, nome: `Via Grau ${Math.random().toString(36).slice(2, 7)}`, modalidade: "esportiva", grau: "7a", grau_ordem: 13, ...extra });
+
+  it("recusa grau que não pertence à escala da modalidade, mesmo pela API", async () => {
+    expect((await autor.cliente.from("vias").insert(via({ modalidade: "esportiva", grau: "V5" }))).error).not.toBeNull();
+    expect((await autor.cliente.from("vias").insert(via({ modalidade: "boulder", grau: "7a" }))).error).not.toBeNull();
+    expect((await autor.cliente.from("vias").insert(via({ grau: "qualquer coisa" }))).error).not.toBeNull();
+  });
+
+  it("calcula a ordem do grau no banco, ignorando o valor enviado", async () => {
+    const boulder = await autor.cliente.from("vias").insert(via({ modalidade: "boulder", grau: "V5", grau_ordem: 25 })).select("id, grau_ordem").single();
+    expect(boulder.error).toBeNull();
+    expect(boulder.data!.grau_ordem).toBe(6);
+    const corda = await autor.cliente.from("vias").insert(via({ grau: "12c", grau_ordem: 1 })).select("grau_ordem").single();
+    expect(corda.data!.grau_ordem).toBe(30);
+    const editada = await servico.from("vias").update({ grau: "V0" }).eq("id", boulder.data!.id).select("grau_ordem").single();
+    expect(editada.data!.grau_ordem).toBe(1);
+  });
+});
+
 describe("perfis", () => {
   it("usuário não consegue se promover a admin", async () => {
     const { error } = await autor.cliente.from("perfis").update({ papel: "admin" }).eq("id", autor.id);
