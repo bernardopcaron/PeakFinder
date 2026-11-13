@@ -44,3 +44,4 @@ chaves.txt
 *.tsbuildinfo
 next-env.d.ts
 /public/maplibre-gl-worker.mjs
+/.superpowers/
