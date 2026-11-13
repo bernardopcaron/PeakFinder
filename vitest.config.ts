@@ -7,6 +7,7 @@ export default defineConfig({
     include: ["src/**/*.test.ts", "testes/banco/**/*.test.ts"],
     environment: "node",
     testTimeout: 30000,
+    hookTimeout: 180000,
     fileParallelism: false,
   },
 });

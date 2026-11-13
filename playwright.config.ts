@@ -7,6 +7,8 @@ export default defineConfig({
   timeout: 60000,
   fullyParallel: false,
   workers: 1,
+  // Os testes falam com um Supabase remoto; uma nova tentativa absorve falhas passageiras de rede.
+  retries: 1,
   reporter: [["list"]],
   globalTeardown: "./testes/e2e/limpeza.global.ts",
   expect: { timeout: 12000 },
