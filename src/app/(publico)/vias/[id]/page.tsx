@@ -8,7 +8,8 @@ import { SeloSituacao } from "@/componentes/SeloSituacao";
 import { hojeNoBrasil } from "@/lib/datas";
 import { ehUuid } from "@/lib/formato";
 import { obterUsuario } from "@/lib/sessao";
-import { Galeria } from "@/modulos/comunidade/componentes/Galeria";
+import { Comentarios, EnvioFotos, Galeria } from "@/modulos/comunidade";
+import { FormReporte } from "@/modulos/moderacao";
 import { Avaliar, BotaoFavoritar, FormAscensao } from "@/modulos/escaladas";
 import { estadoDaViaParaUsuario } from "@/modulos/escaladas/consultas";
 import { FichaTecnica } from "@/modulos/vias";
@@ -68,8 +69,17 @@ export default async function PaginaVia({ params }: PageProps<"/vias/[id]">) {
       )}
 
       <Secao titulo="Fotos e croquis">
-        <Galeria fotos={via.fotos} />
+        <div className="space-y-4">
+          <Galeria fotos={via.fotos} usuarioId={usuario?.id} />
+          <EnvioFotos alvo={{ via_id: via.id }} usuarioId={usuario?.id ?? null} />
+        </div>
       </Secao>
+
+      <Secao titulo="Comentários">
+        <Comentarios alvo={{ via_id: via.id }} usuarioId={usuario?.id ?? null} retorno={`/vias/${via.id}`} />
+      </Secao>
+
+      <FormReporte alvo={{ via_id: via.id }} logado={logado} retorno={`/vias/${via.id}`} />
     </article>
   );
 }

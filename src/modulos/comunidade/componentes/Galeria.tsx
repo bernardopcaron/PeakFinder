@@ -1,7 +1,8 @@
 import { urlPublica } from "@/lib/arquivos";
 import type { Foto } from "@/modulos/areas/tipos";
+import { RemoverFoto } from "./BotoesRemover";
 
-export function Galeria({ fotos, vazio = "Ainda não há fotos." }: { fotos: Foto[]; vazio?: string }) {
+export function Galeria({ fotos, usuarioId = null, vazio = "Ainda não há fotos." }: { fotos: Foto[]; usuarioId?: string | null; vazio?: string }) {
   if (fotos.length === 0) return <p className="text-sm text-grafite-600">{vazio}</p>;
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3" data-testid="galeria">
@@ -21,6 +22,11 @@ export function Galeria({ fotos, vazio = "Ainda não há fotos." }: { fotos: Fot
               {foto.tipo === "croqui" && <span className="rounded bg-grafite-800 px-1.5 py-0.5 font-semibold text-white">Croqui</span>}
               <span className="truncate">{foto.legenda}</span>
             </figcaption>
+            {foto.enviado_por === usuarioId && usuarioId && (
+              <div className="border-t border-pedra-200 px-1">
+                <RemoverFoto id={foto.id} />
+              </div>
+            )}
           </figure>
         </li>
       ))}

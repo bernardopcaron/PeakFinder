@@ -10,7 +10,10 @@ import { Visualizador3D } from "@/modulos/visualizador3d";
 import { texto } from "@/lib/formato";
 import { AlertaAcesso, CapaArea, ListaSetores } from "@/modulos/areas";
 import { obterAreaPorSlug } from "@/modulos/areas/consultas";
-import { Galeria } from "@/modulos/comunidade/componentes/Galeria";
+import { classesBotao } from "@/componentes/Botao";
+import { obterUsuario } from "@/lib/sessao";
+import { Comentarios, EnvioFotos, Galeria } from "@/modulos/comunidade";
+import { FormReporte } from "@/modulos/moderacao";
 import { MiniMapa } from "@/modulos/mapa";
 import { TabelaVias } from "@/modulos/vias";
 import { listarViasDaArea } from "@/modulos/vias/consultas";
@@ -23,7 +26,8 @@ export async function generateMetadata({ params }: PageProps<"/areas/[slug]">): 
 export default async function PaginaArea({ params }: PageProps<"/areas/[slug]">) {
   const area = await obterAreaPorSlug((await params).slug);
   if (!area) notFound();
-  const vias = await listarViasDaArea(area.id);
+  const [vias, usuario] = await Promise.all([listarViasDaArea(area.id), obterUsuario()]);
+  const caminho = `/areas/${area.slug}`;
 
   return (
     <article>
@@ -56,15 +60,29 @@ export default async function PaginaArea({ params }: PageProps<"/areas/[slug]">)
                 {area.modelo.descricao && <p className="mt-2 text-sm text-grafite-600">{area.modelo.descricao}</p>}
               </Secao>
             )}
-            <Secao titulo="Setores">
+            <Secao
+              titulo="Setores"
+              acao={
+                <Link href={`/contribuir/setor?area=${area.id}`} className={classesBotao("fantasma")}>
+                  Adicionar setor
+                </Link>
+              }
+            >
               <ListaSetores areaSlug={area.slug} setores={area.setores} />
             </Secao>
             <Secao titulo="Vias">
               <TabelaVias vias={vias} />
             </Secao>
             <Secao titulo="Fotos e croquis">
-              <Galeria fotos={area.fotos} />
+              <div className="space-y-4">
+                <Galeria fotos={area.fotos} usuarioId={usuario?.id} />
+                <EnvioFotos alvo={{ area_id: area.id }} usuarioId={usuario?.id ?? null} />
+              </div>
             </Secao>
+            <Secao titulo="Comentários">
+              <Comentarios alvo={{ area_id: area.id }} usuarioId={usuario?.id ?? null} retorno={caminho} />
+            </Secao>
+            <FormReporte alvo={{ area_id: area.id }} logado={Boolean(usuario)} retorno={caminho} />
           </div>
           <aside className="space-y-6">
             <div className="space-y-2">

@@ -9,7 +9,10 @@ import { urlPublica } from "@/lib/arquivos";
 import { Visualizador3D } from "@/modulos/visualizador3d";
 import { texto } from "@/lib/formato";
 import { obterSetor } from "@/modulos/areas/consultas";
-import { Galeria } from "@/modulos/comunidade/componentes/Galeria";
+import { classesBotao } from "@/componentes/Botao";
+import { obterUsuario } from "@/lib/sessao";
+import { EnvioFotos, Galeria } from "@/modulos/comunidade";
+import { FormReporte } from "@/modulos/moderacao";
 import { TabelaVias } from "@/modulos/vias";
 import { listarViasDoSetor } from "@/modulos/vias/consultas";
 
@@ -23,7 +26,8 @@ export default async function PaginaSetor({ params }: PageProps<"/areas/[slug]/[
   const { slug, setor: setorSlug } = await params;
   const setor = await obterSetor(slug, setorSlug);
   if (!setor) notFound();
-  const vias = await listarViasDoSetor(setor.id);
+  const [vias, usuario] = await Promise.all([listarViasDoSetor(setor.id), obterUsuario()]);
+  const caminho = `/areas/${setor.area.slug}/${setor.slug}`;
 
   return (
     <article className="mx-auto max-w-6xl space-y-8 px-4 py-6">
@@ -66,12 +70,23 @@ export default async function PaginaSetor({ params }: PageProps<"/areas/[slug]/[
           {setor.modelo.descricao && <p className="mt-2 text-sm text-grafite-600">{setor.modelo.descricao}</p>}
         </Secao>
       )}
-      <Secao titulo="Vias">
+      <Secao
+        titulo="Vias"
+        acao={
+          <Link href={`/contribuir/via?setor=${setor.id}`} className={classesBotao("fantasma")}>
+            Adicionar via
+          </Link>
+        }
+      >
         <TabelaVias vias={vias} mostrarSetor={false} />
       </Secao>
       <Secao titulo="Fotos e croquis">
-        <Galeria fotos={setor.fotos} />
+        <div className="space-y-4">
+          <Galeria fotos={setor.fotos} usuarioId={usuario?.id} />
+          <EnvioFotos alvo={{ setor_id: setor.id }} usuarioId={usuario?.id ?? null} />
+        </div>
       </Secao>
+      <FormReporte alvo={{ setor_id: setor.id }} logado={Boolean(usuario)} retorno={caminho} />
     </article>
   );
 }
