@@ -16,9 +16,9 @@ export function FichaTecnica({ via }: { via: ViaDetalhe }) {
   ];
   return (
     <section aria-label="Ficha técnica">
-      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-pedra-200 ring-1 ring-pedra-200 sm:grid-cols-3">
+      <dl className="grid grid-cols-2 overflow-hidden rounded-xl bg-white ring-1 ring-pedra-200 sm:grid-cols-3">
         {itens.map(([termo, valor]) => (
-          <div key={termo} className={`bg-white p-4 ${["Proteção", "Crux"].includes(termo) ? "col-span-2 sm:col-span-3" : ""}`}>
+          <div key={termo} className={`border-b border-r border-pedra-200 p-4 ${["Proteção", "Crux"].includes(termo) ? "col-span-2 sm:col-span-3" : ""}`}>
             <dt className="text-xs font-semibold uppercase tracking-wide text-grafite-600">{termo}</dt>
             <dd className={`mt-1 ${termo === "Grau" ? "text-2xl font-bold text-terracota-700" : "text-base font-medium"}`}>{valor}</dd>
           </div>
